@@ -1,0 +1,5 @@
+Very simple monitoring utility, that monitors the apache and wsgi applications running on a server.
+
+It monitors a few of the main resources and characteristics. It is curses bases, and uses the psutil module.
+
+Code sucks, but still works nicely :) I hope I will re-write it soon in a much better way.
