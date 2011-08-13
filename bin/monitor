@@ -1,0 +1,14 @@
+#!/usr/bin/python
+
+import sys
+sys.path[0:0] = [
+    '/mnt/hgfs/smartpr/webserver-monitor/src',
+    '/mnt/hgfs/smartpr/webserver-monitor/eggs/psutil-0.3.0-py2.6-linux-x86_64.egg',
+    '/mnt/hgfs/smartpr/webserver-monitor/eggs/setuptools-0.6c12dev_r88846-py2.6.egg',
+    ]
+
+
+import monitor.run
+
+if __name__ == '__main__':
+    monitor.run.main()
