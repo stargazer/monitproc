@@ -12,3 +12,8 @@ docs/build/html/*
 build/*
 .installed.cfg
 bin/*
+eggs/
+develop-eggs/
+parts/
+SOURCES.txt
+egg-info/

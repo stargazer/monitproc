@@ -1,61 +1,4 @@
-import psutil, sys, os
-from psutil.error import AccessDenied
-from screen import Screen 
 import threading
-import time
-from metrics import Measurement
-from present import Presentation
-
-
-def main():
-	manager = ThreadManager()
-	
-	try:
-		manager.start()		
-	except:
-		# Setting event `terminate` to True. Now all threads will terminate.
-		manager.terminate.set()
-
-class ThreadManager():
-	""" Very simple thread management class.
-
-		Creates and starts threads. After starting them, this thread sleeps,
-		and only wakes up when it's `terminate` attribute is set. This is set
-		by `main()` once an interrupt has been captures.
-		Once this happens, this thread awakes, and waits for all other threads
-		to terminate.
-	"""
-
-	def __init__(self):
-		# Event. Signals to threads that they need to terminate
-		self.terminate = threading.Event()
-		self.measurements = []
-
-		self.threads = (
-			Measurement(self.terminate, self.measurements),
-			Presentation(self.terminate, self.measurements),
-		)
-	
-	def start(self):
-		for thread in self.threads:
-			thread.start()      
-
-		def wait():
-			# Event. Used to make this thread sleep.
-			event = threading.Event()
-
-			# If terminate is not set, sleep.
-			# Otherwise, wait for threads to terminate
-			while not self.terminate.is_set():
-				event.wait(1)
-			else:
-				for thread in self.threads:
-					thread.join()
-
-		wait()
-
-   		
-
 
 class Presentation(threading.Thread):
 	""" This class is responsible to create an ncurses window, and present the 
@@ -186,4 +129,4 @@ class Presentation(threading.Thread):
 
 		return proc_outputs
 			
-
+                         
