@@ -8,16 +8,18 @@ class Measurement(threading.Thread):
 
 	INTERVAL = 1.0 
 
-	def __init__(self, terminate, measurements):
+	def __init__(self, terminate, measurements, lock):
 		""" Creates an instance of a thread, that will poll the system
 			and get the measurements.
 
 			@param terminate: Event that will signal the thread to terminate
 			@param measurements: List where measurements will be stored
+			@param lock: Used to control access to `measurements`
 		"""
 		self.event = threading.Event()
 		self.terminate = terminate
 		self.measurements = measurements
+		self.lock = lock
 		super(Measurement, self).__init__()
 	
 	def run(self):
@@ -33,11 +35,16 @@ class Measurement(threading.Thread):
 		process_iter = psutil.process_iter()
 
 		# LOCK
+		self.lock.acquire()
+
 		del self.measurements[:]
 		for process in process_iter:               
 			if process.cmdline:
 				if 'wsgi' in process.cmdline[0] or \
 					'apache' in process.cmdline[0]:
 					self.measurements.append(process)
+		
 		# UNLOCK	
- 
+		self.lock.release()
+
+

@@ -1,4 +1,6 @@
 import threading
+from screen import Screen
+from psutil.error import AccessDenied
 
 class Presentation(threading.Thread):
 	""" This class is responsible to create an ncurses window, and present the 
@@ -23,10 +25,11 @@ class Presentation(threading.Thread):
 	# How the elements will be displayed		
 	TEMPLATE = '%(element)18s'
 
-	def __init__(self, terminate, measurements):
+	def __init__(self, terminate, measurements, lock):
 		self.event = threading.Event()
 		self.terminate = terminate
 		self.measurements = measurements
+		self.lock = lock
 		super(Presentation, self).__init__()
 		
 
@@ -35,29 +38,49 @@ class Presentation(threading.Thread):
 		s = Screen(Presentation.SCREEN_ROWS, Presentation.SCREEN_COLS, 0, 0)
 
 		while not self.terminate.is_set():
-			# create contents of screen
-			content = self.create_contents()
-			title = Presentation.get_title()
-			line = 3
-
 			if s.exists:
-				s.write(1, 1, title)
-				for lista in content:
-					proc_output = ''.join(lista)
-					s.write(line, 1, proc_output, refresh = False)
-					line = line + 1
+				# create contents of screen
+				content = self.create_content()
+        	    # Returns a list of tuples
+				# (row, string_to_write)
+			
+				for row, string in content:
+					s.write(row, 1, string, refresh=False)
 				s.refresh()
-				s.clear_rest()			
-			#
+				s.clear_rest()
 			self.event.wait(1)
 		
 		if s.exists:		
 			s.kill()
 
+ 
+	def create_content(self):
+		""" Returns a list of tuples of (row, string), 
+			which represents the row, and the string to be written
+			in the `curses` screen.
+		"""
+		outputs = []
 
-	def present(self):
-		pass
+		title = Presentation.get_title()
+   		outputs.append((1, title))
 
+		row = 3
+
+		# LOCK
+		self.lock.acquire()
+
+		for process in self.measurements:
+			# Retrieve process information
+			proc_info = Presentation.get_process_information(process)
+			if proc_info:
+				outputs.append((row, proc_info))
+				row += 1
+
+		# UNLOCK
+		self.lock.release()
+		return outputs
+			
+ 
 	@classmethod
 	def get_title(cls):
 		output_list = [] # A list of all the fields to display
@@ -71,7 +94,9 @@ class Presentation(threading.Thread):
 	@classmethod
 	def get_process_information(cls,process):
 			""" 
-			Analyzes the `process` received, and returns a dictionary with the process information
+			Analyzes the `process` received. Retrieves all its information, and returns
+			a string with the process information, which will eventually represent
+			a line of output.
 			
 			@param process: psutil.Process instance
 			"""
@@ -102,31 +127,13 @@ class Presentation(threading.Thread):
 			except AccessDenied:
 			 	pass
 
-			return info
+			output_list = []
+			# Make a list out of the dictionary
+			for name, _title in cls.FIELDS:
+				value = info[name]
+				output = cls.TEMPLATE % ({'element':value})
+				output_list.append(output)
 
-	@classmethod
-	def get_proc_output_list(cls, proc_info):
-		template = '%(value)18s'
-		output_list = []
+			return ''.join(output_list)
 
-		for name, _title in cls.FIELDS:
-			value = proc_info[name]
-			output = cls.TEMPLATE % ({'element':value})
-			output_list.append(output)
-		return output_list
-																			   
-
-	def create_contents(self):
-		proc_info_list = []
-		proc_outputs = []
-
-		for process in self.measurements:
-			proc_info = Presentation.get_process_information(process)
-
-			if proc_info:
-				proc_output_list = Presentation.get_proc_output_list(proc_info)
-				proc_outputs.append(proc_output_list)
-
-		return proc_outputs
-			
-                         
+                        
