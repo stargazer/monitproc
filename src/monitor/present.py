@@ -64,11 +64,11 @@ class Presentation(threading.Thread):
 		title = Presentation.get_title()
    		outputs.append((1, title))
 
-		row = 3
 
 		# LOCK
 		self.lock.acquire()
 
+		row = 3
 		for process in self.measurements:
 			# Retrieve process information
 			proc_info = Presentation.get_process_information(process)
