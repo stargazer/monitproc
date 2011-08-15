@@ -14,10 +14,10 @@ class Screen:
 			self.w = stdscr.subwin(height, width, y, x)
 			self.w.box()
 			self.w.refresh()
-			self.exists = True
-
 		except:
-			self.exists = False			
+			self.kill()
+			raise
+		
 
 	def write(self, line, column, text, refresh=True):
 		self.w.addstr(line, column, text)

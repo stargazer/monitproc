@@ -33,24 +33,27 @@ class Presentation(threading.Thread):
 		super(Presentation, self).__init__()
 		
 
-	def run(self): 
-		# create a virtual screen
-		s = Screen(Presentation.SCREEN_ROWS, Presentation.SCREEN_COLS, 0, 0)
+	def run(self):
+		try:
+			# create a virtual screen
+			s = Screen(Presentation.SCREEN_ROWS, Presentation.SCREEN_COLS, 0, 0)
+		except:  	
+			# Re-raising the exception, print out the traceback, and  kills the thread.
+			raise
 
-		while not self.terminate.is_set():
-			if s.exists:
+		else:
+			while not self.terminate.is_set():
 				# create contents of screen
 				content = self.create_content()
-        	    # Returns a list of tuples
+    	   	    # Returns a list of tuples
 				# (row, string_to_write)
 			
 				for row, string in content:
 					s.write(row, 1, string, refresh=False)
 				s.refresh()
 				s.clear_rest()
-			self.event.wait(1)
+				self.event.wait(1)
 		
-		if s.exists:		
 			s.kill()
 
  
