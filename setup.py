@@ -11,6 +11,6 @@ setup(
 	],
 	entry_points = """
 	[console_scripts]
-	monitor = monitor.run:main
+	monitor = monitor.monitor:main
 	""",
 )
