@@ -19,7 +19,7 @@ class Presentation(threading.Thread):
 		('pid', 'PID' ),
 		('cpu_percent', 'CPU Percent' ),
 		('memory_info_rss', 'RSS'),
-		('memory_info_vms', 'VM Size'),
+		('memory_info_vms', 'VM Size (MBs)'),
 		('memory_percent', 'Memory Percent' ),
 		('num_threads', 'Num Threads' ),
 	)
