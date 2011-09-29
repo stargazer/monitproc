@@ -5,7 +5,9 @@ from psutil.error import AccessDenied
 class Presentation(threading.Thread):
 	""" This class is responsible to create an ncurses window, and present the 
 		measurements, using the `measurements` list that is populated by the other
-		thread.
+		thread.                     
+
+		http://code.google.com/p/psutil/wiki/Documentation
 
 	"""
 	SCREEN_ROWS = 30
@@ -16,7 +18,7 @@ class Presentation(threading.Thread):
 		( 'cmdline', 'Command line' ) ,
 		('pid', 'PID' ),
 		('cpu_percent', 'CPU Percent' ),
-		('memory_info_rss', 'Memory Usage'),
+		('memory_info_rss', 'RSS'),
 		('memory_info_vms', 'VM Size'),
 		('memory_percent', 'Memory Percent' ),
 		('num_threads', 'Num Threads' ),
