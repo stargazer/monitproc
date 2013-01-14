@@ -8,4 +8,9 @@ setup(
 		'setuptools',
 		'psutil',
 	),
+    entry_points={
+        'console_scripts': (
+            'monitor=monitor.run:main',
+        )
+    },        
 )
