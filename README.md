@@ -13,3 +13,4 @@ TODO
 1. Rewrite the whole ``metrics.py`` and ``presentation.py`` modules
 2. Make sure to understand the metrics that I take
 3. Are there more useful measurements to take?
+4. Make it more flexible, in the sense that different kinds of processes can be measured... based on name, pid, etc
