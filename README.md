@@ -7,3 +7,9 @@ It is `curses <http://docs.python.org/library/curses.html>`_ based, and uses the
 
 The repository includes a ``buildout.cfg`` file, so that the application can be built as a standalone script, and run from the console.
 
+
+TODO
+-----
+1. Rewrite the whole ``metrics.py`` and ``presentation.py`` modules
+2. Make sure to understand the metrics that I take
+3. Are there more useful measurements to take?
