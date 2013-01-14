@@ -33,7 +33,6 @@ def main():
 	# Pause and wait for Ctrl-C
 	signal.pause()
 
-
 class ThreadManager(threading.Thread):
 	""" Very simple thread management class.
 
@@ -87,4 +86,5 @@ class ThreadManager(threading.Thread):
 			worker.join()            
    		
 
-
+if __name__ == '__main__':
+    main()
