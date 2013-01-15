@@ -32,7 +32,7 @@ def main():
 
     workers = (
         Measurement(measurements, lock),
-        Presentation(s, measurements, lock),
+        Presentation(measurements, lock, s),
     )
     for worker in workers:
         worker.start()      

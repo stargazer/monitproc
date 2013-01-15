@@ -24,11 +24,11 @@ class Presentation(threading.Thread):
     # How the elements will be displayed        
     TEMPLATE = '%(element)18s'
 
-    def __init__(self, screen, measurements, lock):
-        self.screen = screen
+    def __init__(self, measurements, lock, screen):
         self.measurements = measurements
         self.lock = lock
-
+        self.screen = screen
+        
         super(Presentation, self).__init__()
         self.daemon = True
         
