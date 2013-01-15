@@ -14,3 +14,4 @@ TODO
 2. Make sure to understand the metrics that I take
 3. Are there more useful measurements to take?
 4. Make it more flexible, in the sense that different kinds of processes can be measured... based on name, pid, etc
+5. On top of the screen, print system information... CPU freq, total memory, swap space, etc

@@ -29,19 +29,18 @@ class Measurement(threading.Thread):
 
     def poll_system(self):
         """ 
-        Modified the contents of self.measurements with Process instances, that 
-        belong to apache or wsgi processes.
+        We gather the ``psutil.Process`` instances corresponding to all
+        processes we are interested in. Every ``psutil.Process`` instance,
+        contains all kinds of measurements about the process.
         """
-        process_iter = psutil.process_iter()
-
         # LOCK
         self.lock.acquire()
 
         del self.measurements[:]
-        for process in process_iter:               
+        for process in psutil.process_iter():               
             if process.cmdline:
-                if 'wsgi' in process.cmdline[0] or \
-                    'apache' in process.cmdline[0]:
+                if 'wsgi' in process.cmdline[0] or\
+                   'apache' in process.cmdline[0]:
                     self.measurements.append(process)
         
         # UNLOCK    
