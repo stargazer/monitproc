@@ -101,8 +101,8 @@ class Presentation(threading.Thread):
                 measurements.append(process.cmdline[0])
                 measurements.append(process.pid)
                 measurements.append(process.get_cpu_percent())
-                measurements.append(process.get_memory_info().rss / (1024**24))
-                measurements.append(process.get_memory_info().vms / (1024**24))
+                measurements.append(process.get_memory_info()[0] / (1024**2))
+                measurements.append(process.get_memory_info()[1] / (1024**2))
                 measurements.append(round(process.get_memory_percent(), 3))
                 measurements.append(process.get_num_threads())
             except Exception, e:
