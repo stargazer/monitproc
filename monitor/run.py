@@ -6,6 +6,7 @@ import time
 from metrics import Measurement
 from present import Presentation
 import signal
+import curses
 
 def main():
     """ 
@@ -26,9 +27,9 @@ def main():
     try:
         # create a virtual screen
         s = Screen()
-    except:     
-        # Re-raising the exception, and terminate
-        raise
+    except curses.error:     
+        print 'ERROR: Terminal size not large enough'
+        exit()
 
     workers = (
         Measurement(measurements, lock),
