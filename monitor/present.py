@@ -64,13 +64,12 @@ class Presentation(threading.Thread):
         self.lock.acquire()
 
         row = 3
-        for process in self.measurements:
+        for proc_measurements in self.measurements:
             # Retrieve process measurements as a formatted string
-            proc_info = self.get_proc_info_line(process)
+            output_line = self.get_proc_info_line(proc_measurements)
             
-            if proc_info:
-                content.append((row, proc_info))
-                row += 1
+            content.append((row, output_line))
+            row += 1
 
         # UNLOCK
         self.lock.release()
@@ -85,31 +84,16 @@ class Presentation(threading.Thread):
             self.TEMPLATE % ({'element': header}) for header in self.HEADERS]
         return ''.join(header_list)
 
-    def get_proc_info_line(self, process):
+    def get_proc_info_line(self, proc_measurements):
             """ 
-            @param process: psutil.Process instance
+            @param proc_measurement: Tuple that contains the measurements for
+            one single process. Every number in the tuple, corresponds to a
+            metric indicated by the corresponding entry in ``self.HEADERS``. 
 
-            Analyzes the ``process`` instance received. Retrieves all its information, and returns
-            a string with the process information, which will eventually represent
-            a line of output.
+            Returns a formatted string with the measurements, that will
+            correspong to one line of output.
             """
-            # In the meantime, the process might have died. That's we wrap the
-            # accessing of the ``psutil.Process`` instance in a try/catch
-            # block.
-            measurements = []
-            try:
-                measurements.append(process.cmdline[0])
-                measurements.append(process.pid)
-                measurements.append(process.get_cpu_percent())
-                measurements.append(process.get_memory_info()[0] / (1024**2))
-                measurements.append(process.get_memory_info()[1] / (1024**2))
-                measurements.append(round(process.get_memory_percent(), 3))
-                measurements.append(process.get_num_threads())
-            except Exception, e:
-                #TODO: What exceptions happen here?
-                # Investigate whether if the process has died, I cant access
-                # its measurementsrmation anymore.
-                return None
-
-            return ''.join(self.TEMPLATE % ({'element': value}) for value in measurements)
+            return ''.join(
+                self.TEMPLATE % ({'element': value}) for value in
+                proc_measurements)
 

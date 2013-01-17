@@ -41,8 +41,17 @@ class Measurement(threading.Thread):
             if process.cmdline:
                 if 'wsgi' in process.cmdline[0] or\
                    'apache' in process.cmdline[0]:
-                    self.measurements.append(process)
-        
+                    # Measurements for the process ``process``
+                    measurement = []
+                    measurement.append(process.cmdline[0])
+                    measurement.append(process.pid)
+                    measurement.append(process.get_cpu_percent())
+                    measurement.append(process.get_memory_info()[0] / (1024**2))
+                    measurement.append(process.get_memory_info()[1] / (1024**2))
+                    measurement.append(round(process.get_memory_percent(), 3))
+                    measurement.append(process.get_num_threads())
+       
+                    self.measurements.append(measurement)
         # UNLOCK    
         self.lock.release()
 
