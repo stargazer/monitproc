@@ -1,6 +1,5 @@
 import threading
 from time import sleep
-from psutil.error import AccessDenied
 
 class Presentation(threading.Thread):
     """ 
@@ -12,13 +11,15 @@ class Presentation(threading.Thread):
 
     """
     HEADERS = (
-        'Process',
-        'Pid',
-        'CPU Percent',
-        'RSS Memory',
-        'VM Size (MBs)',
-        'Memory Percent',
-        'Num Threads',
+        ('Command line',   '%(element)18s'),
+        ('pid',            '%(element)10s'),
+        ('ppid',           '%(element)10s'),
+        ('user',           '%(element)15s'),
+        ('CPU %',          '%(element)10s'),
+        ('RSS Mem(MB)',    '%(element)13s'),
+        ('Virt Mem(MB)',   '%(element)15s'),
+        ('Memory %',       '%(element)10s'),
+        ('Num Threads',    '%(element)13s'),
     )
 
     # The column headers and data will be displayed using this template. 
@@ -57,13 +58,27 @@ class Presentation(threading.Thread):
         """
         content = []
 
+        # The first few lines will contain system stats
+        from psutil import swap_memory, virtual_memory, cpu_percent
+        cpu = 'CPU\t-\tUtilization: %.2f' % cpu_percent()
+        content.append((1, cpu))
+
+        mem = 'MEMORY\t-\tTotal: %dMB\tUsed: %d%%' % (
+            virtual_memory()[0] / (1024**2), virtual_memory()[2]                            
+        )
+        content.append((2, mem))
+        swap = 'SWAP\t-\tTotal: %dMB\tUsed: %d%%' % ( 
+            swap_memory()[0] / (1024**2), swap_memory()[3]
+        )
+        content.append((3, swap))
+                               
         title = self.get_header_line()
-        content.append((1, title))
+        content.append((5, title))
 
         # LOCK
         self.lock.acquire()
 
-        row = 3
+        row = 7
         for proc_measurements in self.measurements:
             # Retrieve process measurements as a formatted string
             output_line = self.get_proc_info_line(proc_measurements)
@@ -81,7 +96,9 @@ class Presentation(threading.Thread):
         the headers of the columns.
         """
         header_list = [
-            self.TEMPLATE % ({'element': header}) for header in self.HEADERS]
+            template % ({'element': header}) for header, template in self.HEADERS 
+        ]
+
         return ''.join(header_list)
 
     def get_proc_info_line(self, proc_measurements):
@@ -94,6 +111,6 @@ class Presentation(threading.Thread):
             correspong to one line of output.
             """
             return ''.join(
-                self.TEMPLATE % ({'element': value}) for value in
-                proc_measurements)
+                self.HEADERS[i][1] % ({'element': value}) for i, value in enumerate(proc_measurements)
+            )
 
