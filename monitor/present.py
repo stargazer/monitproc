@@ -102,15 +102,15 @@ class Presentation(threading.Thread):
         return ''.join(header_list)
 
     def get_proc_info_line(self, proc_measurements):
-            """ 
-            @param proc_measurement: Tuple that contains the measurements for
-            one single process. Every number in the tuple, corresponds to a
-            metric indicated by the corresponding entry in ``self.HEADERS``. 
+        """ 
+        @param proc_measurement: Tuple that contains the measurements for
+        one single process. Every number in the tuple, corresponds to a
+        metric indicated by the corresponding entry in ``self.HEADERS``. 
 
-            Returns a formatted string with the measurements, that will
-            correspong to one line of output.
-            """
-            return ''.join(
-                self.HEADERS[i][1] % ({'element': value}) for i, value in enumerate(proc_measurements)
-            )
+        Returns a formatted string with the measurements, that will
+        correspong to one line of output.
+        """
+        return ''.join(
+            self.HEADERS[i][1] % ({'element': value}) for i, value in enumerate(proc_measurements)
+        )
 

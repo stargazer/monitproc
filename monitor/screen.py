@@ -5,7 +5,7 @@ class Screen:
     Thin layer on top of curses which creates a window on which we will be
     displaying the measurements.
     """
-    ROWS = 35
+    ROWS = 45
     COLUMNS = 130 
     X = 0
     Y = 0
