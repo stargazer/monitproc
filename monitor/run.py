@@ -1,12 +1,13 @@
-import psutil, sys, os
-from psutil.error import AccessDenied
 from screen import Screen 
-import threading
-import time
 from metrics import Measurement
 from present import Presentation
+
+from optparse import OptionParser
+
 import signal
 import curses
+import threading
+import time
 
 def main():
     """ 
@@ -17,8 +18,16 @@ def main():
         * Writing the measurements on the screen
      * Handle the termination which either happens if one of the threads
        terminates, or if Ctrl-C is pressed
-
     """
+    # Utility's usage and command line arguments
+    usage = "usage: %prog arg1 arg2 ...argn"
+    description=\
+    "Monitoring utility. "\
+    "Outputs a list of processes indicated by ``arg1``, ``arg2``, ...,"\
+    "``argn`` and the system resources that they occupy."
+    parser = OptionParser(usage=usage, description=description)
+    (options, args) = parser.parse_args()
+
     # List where the latest measurements will be kept
     measurements = []
     # Used to lock access to ``measurements`` list        
@@ -28,11 +37,11 @@ def main():
         # create a virtual screen
         s = Screen()
     except curses.error:     
-        print 'ERROR: Terminal size not large enough'
+        print 'ERROR: Please maximize the terminal'
         exit()
 
     workers = (
-        Measurement(measurements, lock),
+        Measurement(measurements, lock, args),
         Presentation(measurements, lock, s),
     )
     for worker in workers:
